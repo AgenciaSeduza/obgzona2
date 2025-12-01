@@ -86,17 +86,6 @@
       transform:translateY(-4px);
       box-shadow:0 18px 40px rgba(255,0,102,0.7);
     }
-    .btn:active::after{
-      content:'';
-      position:absolute;
-      width:300px;height:300px;
-      background:rgba(255,255,255,0.2);
-      border-radius:50%;
-      top:50%;left:50%;
-      transform:translate(-50%,-50%);
-      animation:ripple 0.6s ease-out;
-    }
-    @keyframes ripple{to{width:0;height:0;opacity:0;}}
     .footer{
       margin-top:30px;
       font-size:13px;
@@ -105,7 +94,7 @@
     }
   </style>
 
-  <!-- NOVO PIXEL D4KVM0JC77U4IAHDO60G -->
+  <!-- TikTok Pixel NOVO -->
   <script>
     !function (w, d, t) {
       w.TiktokAnalyticsObject=t;var ttq=w[t]=w[t]||[];
@@ -116,7 +105,7 @@
       o=n&&n.partner;ttq._i=ttq._i||{},ttq._i[e]=[],ttq._i[e]._u=r,ttq._t=ttq._t||{},ttq._t[e]=+new Date,ttq._o=ttq._o||{},ttq._o[e]=n||{};
       var s=document.createElement("script");s.type="text/javascript",s.async=!0,s.src=r+"?sdkid="+e+"&lib="+t;
       var a=document.getElementsByTagName("script")[0];a.parentNode.insertBefore(s,a)};
-      ttq.load('D4KVM0JC77U4IAHDO60G');
+      ttq.load('D4MU2TBC77U7MI8IOBKG');
       ttq.page();
     }(window, document, 'ttq');
   </script>
@@ -133,12 +122,13 @@
     <div class="footer">Acesso vitalício • Conteúdo todos os dias</div>
   </div>
 
-  <!-- API EVENTS + NOVO TOKEN e5f6ce91a1b319a2c744864cc042239a6ec02253 -->
+  <!-- Events API com o novo token -->
   <script>
-    const TIKTOK_PIXEL_ID = 'D4KVM0JC77U4IAHDO60G';
-    const TIKTOK_ACCESS_TOKEN = 'e5f6ce91a1b319a2c744864cc042239a6ec02253';
+    const PIXEL_ID = 'D4MU2TBC77U7MI8IOBKG';
+    const ACCESS_TOKEN = '6c42627857b0b90f2df2cf9a50a548b6a3a688c2';
     const API_ENDPOINT = 'https://business-api.tiktok.com/open_api/v1.3/event/track/';
 
+    // Dados da URL
     const urlParams = new URLSearchParams(window.location.search);
     const rawEmail = (urlParams.get('email')||urlParams.get('buyer_email')||urlParams.get('customer_email')||'').toLowerCase().trim();
     const transactionId = urlParams.get('transaction')||urlParams.get('transacao')||urlParams.get('order_id')||urlParams.get('transaction_id')||'';
@@ -146,44 +136,60 @@
     if(phone.length===11) phone='55'+phone;
     if(phone.length===10) phone='55'+phone;
     const phoneE164 = phone ? '+'+phone : '';
-    const externalId = transactionId || rawEmail || 'guest_'+Date.now();
     const value = parseFloat(urlParams.get('value')||urlParams.get('price')||urlParams.get('amount')||'18.00')||18.00;
 
     async function sha256(str){if(!str)return'';const b=new TextEncoder().encode(str);const h=await crypto.subtle.digest('SHA-256',b);return Array.from(new Uint8Array(h)).map(b=>b.toString(16).padStart(2,'0')).join('');}
     function genId(n){return `${n}_${Date.now()}_${Math.random().toString(36).substr(2,9)}`;}
 
-    async function send(e,p={}){
+    async function send(e, p={}){
       const hashedEmail = rawEmail ? await sha256(rawEmail) : '';
       const payload = {
-        pixel_code: TIKTOK_PIXEL_ID,
+        pixel_code: PIXEL_ID,
         event: e,
         event_id: genId(e),
         timestamp: new Date().toISOString(),
-        context:{user_agent:navigator.userAgent, user:{
-          external_id: externalId?[externalId]:[],
-          phone_number: phoneE164?[phoneE164]:[],
-          email: hashedEmail?[hashedEmail]:[]
-        }, page:{url:location.href}},
-        properties:{content_type:'product',content_id:'produto_vip',content_name:'Zona Oculta VIP',currency:'BRL',value,...p}
+        context:{
+          user_agent: navigator.userAgent,
+          user: {
+            external_id: transactionId ? [transactionId] : [],
+            phone_number: phoneE164 ? [phoneE164] : [],
+            email: hashedEmail ? [hashedEmail] : []
+          },
+          page: { url: location.href }
+        },
+        properties: {
+          content_type: 'product_group',
+          content_id: 'ZONA_OCULTA_VIP',
+          content_name: 'Acesso VIP Zona Oculta',
+          currency: 'BRL',
+          value: value,
+          ...p
+        }
       };
-      try{await fetch(API_ENDPOINT,{method:'POST',headers:{'Access-Token':TIKTOK_ACCESS_TOKEN,'Content-Type':'application/json'},body:JSON.stringify(payload)});}catch{}
+      try{
+        await fetch(API_ENDPOINT, {
+          method:'POST',
+          headers:{'Access-Token':ACCESS_TOKEN,'Content-Type':'application/json'},
+          body:JSON.stringify(payload)
+        });
+      }catch{}
     }
 
-    // Dispara Purchase + ViewContent apenas 1x
+    // ViewContent + Purchase (1x por visitante)
     (function(){
-      if(localStorage.getItem('tk_fired_v20')) return;
+      if(localStorage.getItem('tiktok_purchase_fired_v2025')) return;
       setTimeout(async()=>{
         await send('ViewContent');
         await send('Purchase');
-        if(window.ttq) ttq.track('CompletePayment',{value,currency:'BRL'});
-        localStorage.setItem('tk_fired_v20','1');
+        if(window.ttq) ttq.track('Purchase', {value, currency:'BRL'});
+        localStorage.setItem('tiktok_purchase_fired_v2025','1');
       },800);
     })();
 
     // CompleteRegistration no clique
-    document.getElementById('telegram-btn').addEventListener('click',async()=>{
-      await send('CompleteRegistration',{value});
-      if(window.ttq) ttq.track('CompleteRegistration',{value,currency:'BRL'});
+    document.getElementById('telegram-btn').addEventListener('click', async()=>{
+      await send('CompleteRegistration', {value});
+      if(window.ttq) ttq.track('CompleteRegistration', {value, currency:'BRL'});
     });
   </script>
 </body>
