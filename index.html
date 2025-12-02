@@ -94,18 +94,15 @@
     }
   </style>
 
-  <!-- TikTok Pixel NOVO -->
+  <!-- NOVO PIXEL TIKTOK: D4NHAFBC77UDQ79J0170 -->
   <script>
     !function (w, d, t) {
       w.TiktokAnalyticsObject=t;var ttq=w[t]=w[t]||[];
       ttq.methods=["page","track","identify","instances","debug","on","off","once","ready","alias","group","enableCookie","disableCookie","holdConsent","revokeConsent","grantConsent"],
       ttq.setAndDefer=function(t,e){t[e]=function(){t.push([e].concat(Array.prototype.slice.call(arguments,0)))}};
       for(var i=0;i<ttq.methods.length;i++)ttq.setAndDefer(ttq,ttq.methods[i]);
-      ttq.load=function(e,n){var r="https://analytics.tiktok.com/i18n/pixel/events.js",
-      o=n&&n.partner;ttq._i=ttq._i||{},ttq._i[e]=[],ttq._i[e]._u=r,ttq._t=ttq._t||{},ttq._t[e]=+new Date,ttq._o=ttq._o||{},ttq._o[e]=n||{};
-      var s=document.createElement("script");s.type="text/javascript",s.async=!0,s.src=r+"?sdkid="+e+"&lib="+t;
-      var a=document.getElementsByTagName("script")[0];a.parentNode.insertBefore(s,a)};
-      ttq.load('D4MU2TBC77U7MI8IOBKG');
+      ttq.load=function(e,n){var r="https://analytics.tiktok.com/i18n/pixel/events.js",o=n&&n.partner;ttq._i=ttq._i||{},ttq._i[e]=[],ttq._i[e]._u=r,ttq._t=ttq._t||{},ttq._t[e]=+new Date,ttq._o=ttq._o||{},ttq._o[e]=n||{};var s=document.createElement("script");s.type="text/javascript",s.async=!0,s.src=r+"?sdkid="+e+"&lib="+t;var a=document.getElementsByTagName("script")[0];a.parentNode.insertBefore(s,a)};
+      ttq.load('D4NHAFBC77UDQ79J0170');
       ttq.page();
     }(window, document, 'ttq');
   </script>
@@ -122,10 +119,10 @@
     <div class="footer">Acesso vitalício • Conteúdo todos os dias</div>
   </div>
 
-  <!-- Events API com o novo token -->
+  <!-- NOVA API EVENTS COM TOKEN 07d7627f636891fe766f9534eb40277be35f9b83 -->
   <script>
-    const PIXEL_ID = 'D4MU2TBC77U7MI8IOBKG';
-    const ACCESS_TOKEN = '6c42627857b0b90f2df2cf9a50a548b6a3a688c2';
+    const PIXEL_ID = 'D4NHAFBC77UDQ79J0170';
+    const ACCESS_TOKEN = '07d7627f636891fe766f9534eb40277be35f9b83';
     const API_ENDPOINT = 'https://business-api.tiktok.com/open_api/v1.3/event/track/';
 
     // Dados da URL
@@ -177,16 +174,16 @@
 
     // ViewContent + Purchase (1x por visitante)
     (function(){
-      if(localStorage.getItem('tiktok_purchase_fired_v2025')) return;
+      if(localStorage.getItem('tiktok_purchase_fired_2025')) return;
       setTimeout(async()=>{
         await send('ViewContent');
         await send('Purchase');
-        if(window.ttq) ttq.track('Purchase', {value, currency:'BRL'});
-        localStorage.setItem('tiktok_purchase_fired_v2025','1');
+        if(window.ttq) ttq.track('Purchase', {value, currency:'BRL', content_id: 'ZONA_OCULTA_VIP'});
+        localStorage.setItem('tiktok_purchase_fired_2025','1');
       },800);
     })();
 
-    // CompleteRegistration no clique
+    // CompleteRegistration no clique (opcional)
     document.getElementById('telegram-btn').addEventListener('click', async()=>{
       await send('CompleteRegistration', {value});
       if(window.ttq) ttq.track('CompleteRegistration', {value, currency:'BRL'});
