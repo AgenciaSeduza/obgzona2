@@ -23,7 +23,7 @@ exports.handler = async (event) => {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
-        "Access-Token": "COLE_AQUI_SEU_ACCESS_TOKEN" // depois substitui
+        "Access-Token": "0322d0268e31b9d59d2690d697389a2aa704d681" // depois substitui
       },
       body: JSON.stringify(data)
     });
