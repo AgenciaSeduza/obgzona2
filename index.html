@@ -95,96 +95,66 @@
   </style>
 </head>
 <body>
+
   <div class="card">
     <img src="foto.png" alt="Acesso liberado" class="avatar" />
     <h1>ACESSO LIBERADO</h1>
     <div class="success">Compra confirmada com sucesso!</div>
     <p>Sua entrada no grupo VIP da <strong>Zona Oculta</strong> já está garantida. Clique abaixo e entre agora.</p>
+
     <a id="telegram-btn" href="https://t.me/+I-pcyWQm0khmYzYx" class="btn" target="_blank">
       ENTRAR NO GRUPO VIP AGORA
     </a>
+
     <div class="footer">Acesso vitalício • Conteúdo todos os dias</div>
   </div>
 
-  <!-- APENAS API EVENTS (SEM SDK) - NOVO PIXEL D4O8U9JC77UA1JCQ5P30 -->
+  <!-- ✅ EVENTO SERVER-SIDE VIA NETLIFY (SEM PIXEL, SEM TOKEN NO FRONT) -->
   <script>
-    const PIXEL_ID = 'D4O8U9JC77UA1JCQ5P30';
-    const ACCESS_TOKEN = 'df349851296e7145f67406e2558c06c72b4ad2e9';
-    const API_ENDPOINT = 'https://business-api.tiktok.com/open_api/v1.3/event/track/';
 
-    // === PEGA DADOS DA URL (Hotmart, Kiwify, Braip, etc) ===
     const urlParams = new URLSearchParams(window.location.search);
-    const rawEmail = (urlParams.get('email')||urlParams.get('buyer_email')||urlParams.get('customer_email')||'').toLowerCase().trim();
-    const transactionId = urlParams.get('transaction')||urlParams.get('transacao')||urlParams.get('order_id')||urlParams.get('transaction_id')||'';
-    let phone = (urlParams.get('phone')||urlParams.get('buyer_phone')||urlParams.get('customer_phone')||'').replace(/\D/g,'');
-    if(phone.length===11) phone='55'+phone;
-    if(phone.length===10) phone='55'+phone;
-    const phoneE164 = phone ? '+'+phone : '';
-    const value = parseFloat(urlParams.get('value')||urlParams.get('price')||urlParams.get('amount')||'18.00') || 18.00;
 
-    async function sha256(str){
-      if(!str) return '';
-      const buffer = new TextEncoder().encode(str);
-      const hash = await crypto.subtle.digest('SHA-256', buffer);
-      return Array.from(new Uint8Array(hash)).map(b=>b.toString(16).padStart(2,'0')).join('');
-    }
+    const value = parseFloat(
+      urlParams.get('value') ||
+      urlParams.get('price') ||
+      urlParams.get('amount') ||
+      '18.00'
+    ) || 18.00;
 
-    function genId(n){
-      return `${n}_${Date.now()}_${Math.random().toString(36).substr(2,9)}`;
-    }
-
-    async function send(eventName, extra = {}){
-      const hashedEmail = rawEmail ? await sha256(rawEmail) : '';
-      const payload = {
-        pixel_code: PIXEL_ID,
-        event: eventName,
-        event_id: genId(eventName),
-        timestamp: new Date().toISOString(),
-        context: {
-          user_agent: navigator.userAgent,
-          user: {
-            external_id: transactionId ? [transactionId] : [],
-            phone_number: phoneE164 ? [phoneE164] : [],
-            email: hashedEmail ? [hashedEmail] : []
-          },
-          page: { url: location.href }
-        },
-        properties: {
-          content_type: 'product_group',
-          content_id: 'ZONA_OCULTA_VIP',
-          content_name: 'Acesso VIP Zona Oculta',
-          currency: 'BRL',
+    function sendEvent(eventName) {
+      fetch('/.netlify/functions/tiktok-event', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          event: eventName,
           value: value,
-          ...extra
-        }
-      };
-
-      try {
-        await fetch(API_ENDPOINT, {
-          method: 'POST',
-          headers: {
-            'Access-Token': ACCESS_TOKEN,
-            'Content-Type': 'application/json'
-          },
-          body: JSON.stringify(payload)
-        });
-      } catch(e) {}
+          currency: "BRL",
+          content_name: "Acesso VIP Zona Oculta"
+        })
+      })
+      .then(r => r.json())
+      .then(d => console.log("✅ Evento enviado:", eventName, d))
+      .catch(e => console.error("Erro:", e));
     }
 
-    // ViewContent + Purchase (1x por visitante)
+    // Enviar Purchase + ViewContent (apenas 1 vez)
     (function(){
-      if(localStorage.getItem('tt_purchase_rede_2025')) return;
-      setTimeout(async () => {
-        await send('ViewContent');
-        await send('Purchase');
-        localStorage.setItem('tt_purchase_rede_2025', '1');
+      if(localStorage.getItem('tt_purchase_zo_reserva')) return;
+
+      setTimeout(() => {
+        sendEvent('ViewContent');
+        sendEvent('Purchase');
+        localStorage.setItem('tt_purchase_zo_reserva', '1');
       }, 800);
+
     })();
 
-    // CompleteRegistration no clique do Telegram
+    // Evento ao clicar no botão
     document.getElementById('telegram-btn').addEventListener('click', () => {
-      send('CompleteRegistration');
+      sendEvent('CompleteRegistration');
     });
+
   </script>
+
 </body>
 </html>
