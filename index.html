@@ -106,10 +106,10 @@
     <div class="footer">Acesso vitalício • Conteúdo todos os dias</div>
   </div>
 
-  <!-- APENAS API EVENTS (SEM SDK) - NOVO PIXEL D4O8MMJC77UDQ79J0IL0 -->
+  <!-- APENAS API EVENTS (SEM SDK) - NOVO PIXEL D4O8U9JC77UA1JCQ5P30 -->
   <script>
-    const PIXEL_ID = 'D4O8MMJC77UDQ79J0IL0';
-    const ACCESS_TOKEN = '2fc45c662be434604679f977af3372a78fcef66d';
+    const PIXEL_ID = 'D4O8U9JC77UA1JCQ5P30';
+    const ACCESS_TOKEN = 'df349851296e7145f67406e2558c06c72b4ad2e9';
     const API_ENDPOINT = 'https://business-api.tiktok.com/open_api/v1.3/event/track/';
 
     // === PEGA DADOS DA URL (Hotmart, Kiwify, Braip, etc) ===
@@ -173,11 +173,11 @@
 
     // ViewContent + Purchase (1x por visitante)
     (function(){
-      if(localStorage.getItem('tt_purchase_zona_2025')) return;
+      if(localStorage.getItem('tt_purchase_rede_2025')) return;
       setTimeout(async () => {
         await send('ViewContent');
         await send('Purchase');
-        localStorage.setItem('tt_purchase_zona_2025', '1');
+        localStorage.setItem('tt_purchase_rede_2025', '1');
       }, 800);
     })();
 
